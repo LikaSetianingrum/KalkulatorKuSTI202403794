@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="30dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/MenuUtama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MENU UTAMA"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btnMenuKalkulator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Buku Kalkulator"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnMenuRiwayat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Riwayat Perhitungan"/>
+
+    <Button
+        android:id="@+id/btnTentang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tentang Pembuat" />
+
+
+
+</LinearLayout>
