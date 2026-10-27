@@ -1,7 +1,7 @@
 package com.swu.kalkulator;
 
 import android.Manifest;
-import android.app.DownloadManager;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -111,40 +111,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void KirimLokasiKeWa(){
+    private void ambilDataGps() {
         android.location.LocationManager locationManager = (android.location.LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location location = null;
 
-        try{
+        try {
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if (location == null){
-                location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-
+            if (location == null) {
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             }
-        } catch (SecurityException e){
-           e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
 
-        //kirim ke wa
-        if (location != null){
+        if (location != null) {
             String latitude = String.valueOf(location.getLatitude());
             String longitude = String.valueOf(location.getLongitude());
 
-            String mapsLink = "https://maps.google.com/?q=" + latitude + ","+ longitude;
-            String pesan = "Halo Lika, ini lokasi saya saat ini : " + mapsLink;
+            try {
+                // Langsung buka aplikasi Google Maps berdasarkan koordinat GPS HP
+                String uriGeo = "geo:" + latitude + "," + longitude + "?q=" + latitude + "," + longitude + "(Lokasi Saya)";
+                Intent intentMaps = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(uriGeo));
 
-            try{
-                String urlwa = "https://api.whatsapp.com/send?phone=6285865776738&text=" +java.net.URLEncoder.encode(pesan, "UTF-8");
-                android.content.Intent intentWa = new android.content.Intent(Intent.ACTION_VIEW);
-                intentWa.setData(android.net.Uri.parse(urlwa));
-                startActivity(intentWa);
-            } catch (Exception e){
+                if (intentMaps.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intentMaps);
+                } else {
+                    // Fallback ke browser jika aplikasi Maps tidak ada
+                    String webMaps = "https://www.google.com/maps/search/?api=1&query=" + latitude + "," + longitude;
+                    Intent intentWeb = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(webMaps));
+                    startActivity(intentWeb);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
-
-                Toast.makeText(this, "Terjadi Kesalahan saat mendapatkan data GPS dan kirim", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Gagal membuka Google Maps", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Pastikan GPS HP Menyala", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Pastikan GPS HP Menyala dan lokasi terdeteksi", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -195,21 +197,37 @@ public class MainActivity extends AppCompatActivity {
             android.content.Intent intentKamera = new android.content.Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivity(intentKamera);
 
-        }else if (hasil == 3.0) {
-            // Digit 2: Play Audio (menggunakan ringtone bawaan sistem)
-            MediaPlayer mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
-            if (mediaPlayer != null)
-                mediaPlayer.start();
+        } else if (hasil == 3.0) {
+            try {
+                Toast.makeText(MainActivity.this, "Mode Audio Rahasia Aktif!", Toast.LENGTH_SHORT).show();
+                textResult.setText("🎵 Memutar Audio...");
+
+                final MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, Settings.System.DEFAULT_RINGTONE_URI);
+
+                if (mediaPlayer != null) {
+                    mediaPlayer.start();
+
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.release();
+                            textResult.setText("3.0");
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Gagal memutar audio", Toast.LENGTH_SHORT).show();
+            }
 
         }else if (hasil == 7.0){
             android.content.Intent intenGambar = new android.content.Intent(MainActivity.this, ImageActivity.class);
             startActivity(intenGambar);
 
         } else if (hasil == 9.0){
-            KirimLokasiKeWa();
+            ambilDataGps();
 
         } else if (hasil == 4.0){
-        // Digit 5: Membuka Sensor Gyroscope & Accelerometer
         Intent intentSensor = new Intent(MainActivity.this, SensorActivity.class);
         startActivity(intentSensor);
     }

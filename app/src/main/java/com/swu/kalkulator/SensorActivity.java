@@ -24,7 +24,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         textAccel = findViewById(R.id.textAccel);
         textGyro = findViewById(R.id.textGyro);
 
-        // Inisialisasi Sensor Manager
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         if (sensorManager != null) {
@@ -36,7 +36,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     @Override
     protected void onResume() {
         super.onResume();
-        // Daftarkan listener sensor saat activity aktif
+
         if (accelerometer != null) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
@@ -54,15 +54,23 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         }
     }
 
+
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // Tangkap perubahan nilai sensor secara real-time
+
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            String val = String.format("Accelerometer (X, Y, Z):\nX: %.2f\nY: %.2f\nZ: %.2f",
+            String val = String.format(
+                    "• Sumbu X (Kiri / Kanan): %.2f\n" +
+                            "• Sumbu Y (Atas / Bawah): %.2f\n" +
+                            "• Sumbu Z (Depan / Belakang): %.2f",
                     event.values[0], event.values[1], event.values[2]);
             textAccel.setText(val);
+
         } else if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            String val = String.format("Gyroscope (X, Y, Z):\nX: %.2f\nY: %.2f\nZ: %.2f",
+            String val = String.format(
+                    "• Sumbu X (Putar Vertikal): %.2f\n" +
+                            "• Sumbu Y (Putar Horisontal): %.2f\n" +
+                            "• Sumbu Z (Putar Layar/Spin): %.2f",
                     event.values[0], event.values[1], event.values[2]);
             textGyro.setText(val);
         }
@@ -70,6 +78,6 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Tidak perlu diubah, biarkan kosong
+
     }
 }

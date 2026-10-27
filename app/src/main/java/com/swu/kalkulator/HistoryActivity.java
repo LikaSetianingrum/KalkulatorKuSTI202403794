@@ -16,7 +16,17 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         rvRiwayat = findViewById(R.id.rvRiwayat);
         rvRiwayat.setLayoutManager(new LinearLayoutManager(this));
+
         adapter = new RiwayatAdapter(MainActivity.dataRiwayat);
         rvRiwayat.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            // Memaksa RecyclerView untuk update data terbaru setiap kali halaman dibuka
+            adapter.notifyDataSetChanged();
+        }
     }
 }
